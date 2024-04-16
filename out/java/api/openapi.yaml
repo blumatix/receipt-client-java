@@ -1,0 +1,90 @@
+openapi: 3.0.1
+info:
+  title: Receipt API
+  version: "1.0"
+servers:
+- description: Production server
+  url: https://capture.bludelta.ai/receipt
+paths:
+  /v1/receipt:
+    post:
+      parameters:
+      - description: The customer's application key. Required for authentication
+        explode: false
+        in: header
+        name: X-ApiKey
+        required: true
+        schema:
+          type: string
+        style: simple
+      - description: The customer's api identifier key. Not required for authentication
+        explode: false
+        in: header
+        name: X-ApiIdentifier
+        required: false
+        schema:
+          type: string
+        style: simple
+      requestBody:
+        content:
+          multipart/form-data:
+            encoding:
+              file:
+                style: form
+            schema:
+              $ref: '#/components/schemas/_v1_receipt_post_request'
+      responses:
+        "200":
+          description: Success
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Bad Request
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+          description: Unauthorized
+      tags:
+      - Receipt
+      x-content-type: multipart/form-data
+      x-accepts:
+      - application/json
+components:
+  schemas:
+    ProblemDetails:
+      additionalProperties: {}
+      example:
+        instance: instance
+        detail: detail
+        type: type
+        title: title
+        status: 0
+      properties:
+        type:
+          nullable: true
+          type: string
+        title:
+          nullable: true
+          type: string
+        status:
+          format: int32
+          nullable: true
+          type: integer
+        detail:
+          nullable: true
+          type: string
+        instance:
+          nullable: true
+          type: string
+      type: object
+    _v1_receipt_post_request:
+      properties:
+        file:
+          format: binary
+          type: string
+      type: object
+
